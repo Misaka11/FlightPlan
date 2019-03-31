@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="ch">
+
+<head>
+    <meta charset="utf-11">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="飞行计划管理系统">
+    <meta name="keywords" content="飞行计划 飞机 机场 航线 ">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <title>FlightPlan</title>
+    <script src="js/jquery.min.js"></script>
+	<script src="js/jquery.cookie.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/function.js"></script>
+    <script src="js/FileSaver.js"></script>
+    <!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.12.1/bootstrap-table.min.css">
+
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.12.1/bootstrap-table.min.js"></script>
+
+	<!-- Latest compiled and minified Locales -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.12.1/locale/bootstrap-table-zh-CN.min.js"></script>
+
+	    
+    <script>
+        $(function() {
+            $(".meun-item").click(function() {
+                $(".meun-item").removeClass("meun-item-active");
+                $(this).addClass("meun-item-active");
+                var itmeObj = $(".meun-item").find("img");
+                itmeObj.each(function() {
+                    var items = $(this).attr("src");
+                    items = items.replace("_grey.png", ".png");
+                    items = items.replace(".png", "_grey.png")
+                    $(this).attr("src", items);
+                });
+                var attrObj = $(this).find("img").attr("src");
+                ;
+                attrObj = attrObj.replace("_grey.png", ".png");
+                $(this).find("img").attr("src", attrObj);
+            });
+            $("#topAD").click(function() {
+                $("#topA").toggleClass(" glyphicon-triangle-right");
+                $("#topA").toggleClass(" glyphicon-triangle-bottom");
+            });
+            $("#topBD").click(function() {
+                $("#topB").toggleClass(" glyphicon-triangle-right");
+                $("#topB").toggleClass(" glyphicon-triangle-bottom");
+            });
+            $("#topCD").click(function() {
+                $("#topC").toggleClass(" glyphicon-triangle-right");
+                $("#topC").toggleClass(" glyphicon-triangle-bottom");
+            });
+            $(".toggle-btn").click(function() {
+                $("#leftMeun").toggleClass("show");
+                $("#rightContent").toggleClass("pd0px");
+            })
+        })
+    </script>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="css/common.css" />
+    <link rel="stylesheet" type="text/css" href="css/slide.css" />
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/flat-ui.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/jquery.nouislider.css">
+    <link href="css/demo.css" rel="stylesheet" type="text/css" />
+	<link rel="stylesheet" href="css/jqbar.css" />
+
+</head>
+
+<body>
+        <div id="wrap">
+            <!-- 左侧菜单栏目块 -->
+            <div class="leftMeun" id="leftMeun">
+                <div id="logoDiv">
+                    <p id="logoP"><img id="logo" alt="FlightPlan" src="images/logo.png"><span>FlightPlan</span></p>
+                </div>
+                <div id="personInfor">
+                    <p id="userName">***</p>
+                    <br>
+                    <p> 欢迎您，您的身份是</p>
+                    <p id="useridentity">***</p>
+ 
+                    <p>
+                        <a href="index.html" onclick="clearUser()">退出登录</a>
+                    </p>
+                </div>
+                <script >
+                	function clearUser()
+                	{
+                		$.cookie('user_info',null);
+                	}
+			    	$(function(){
+			    		var data = $.cookie('user_info');
+			    		data = eval('('+data+')');
+			    		console.log(data);
+			    		if(data==null)
+			    		{
+			    			alert("你还未登录！");
+			    			window.location.href='index.html';
+			    		}
+			    		else
+			    		{
+			    			document.getElementById("userName").innerHTML = data[0].username;
+			    			if(data[0].competence == 0)
+			    				document.getElementById("useridentity").innerHTML = "普通用户";
+			    			else
+			    				document.getElementById("useridentity").innerHTML = "管理员";
+			    		}
+			    	})
+			    </script>
+			    <div class="meun-title">数据分析模块</div>
+                <div class="meun-item" href="#analysis" aria-controls="analysis" role="tab" data-toggle="tab"><img src="images/icon_source.png">数据统计</div>
+                <div class="meun-title">飞行计划管理</div>
+                <div class="meun-item" href="#airplan" aria-controls="airplan" role="tab" data-toggle="tab"><img src="images/icon_source.png">飞行计划</div>
+                <div class="meun-item" href="#airport" aria-controls="airport" role="tab" data-toggle="tab"><img src="images/icon_house_grey.png">机场管理</div>
+                <div class="meun-item" href="#airway" aria-controls="airway" role="tab" data-toggle="tab"><img src="images/icon_rule_grey.png">航线管理</div>
+                <div class="meun-item" href="#aircraft" aria-controls="aircraft" role="tab" data-toggle="tab"><img src="images/icon_card_grey.png">飞机管理</div>
+                <div class="meun-title">账号管理</div>
+                <div class="meun-item" href="#user" aria-controls="user" role="tab" data-toggle="tab"><img src="images/icon_chara_grey.png">用户管理</div>
+            </div>
+            <!-- 右侧具体内容栏目 -->
+            <div class="main">
+	            <div id="rightContent">
+	                <!-- Tab panes -->
+	                <div class="tab-content">
+
+	                	<!-- 数据管理模块 -->
+			            <div role="tabpanel" class="tab-pane" id="analysis">
+			            	<div class="container">
+								<div class="sixteen columns">
+									<div class="row">
+										<h1>
+											数据统计</h1>
+									</div>
+								</div>
+								<div id="skillset" class="sixteen columns ">
+									
+									<div class="eight columns">
+										<div class="bars MT30">
+											<div id="bar-1">
+											</div>
+											<div id="bar-2">
+											</div>
+											<div id="bar-3">
+											</div>
+											<div id="bar-4">
+											</div>
+											<div id="bar-5">
+											</div>
+											<div id="bar-6">
+											</div>
+										</div>
+									</div>
+									<div class="two columns">
+									</div>
+									<div class="clearfix">
+									</div>
+								</div>
+								<div class="row">
+								</div>
+								<div class="row clear">
+								</div>
+								
+							</div>
+							<script src="js/jqbar.js" type="text/javascript"></script>
+							<script src="js/analysis.js"></script>
+			            </div>
+
+			            <!-- 飞行计划管理模块 -->
+			            <div role="tabpanel" class="tab-pane" id="airplan">
+			                <div class="check-div form-inline" >
+			                    <button class="btn btn-yellow btn-xs" data-toggle="modal" onclick="addAn()">添加计划</button>
+			                </div>
+
+			                <div class="col-xs-11 col-sm-11 col-md-11 col-lg-11">
+						    	<table id="airplanTable"class="table table-condensed"></table>
+							</div>
+
+						    <script src="js/airplan.js"></script>
+						    <!--弹出窗口 添加-->
+			                <div class="modal fade" id="addAirplan" role="dialog" aria-labelledby="gridSystemModalLabel">
+			                </div>
+
+							<!--弹出窗口 详情-->
+			                <div class="modal fade" id="detailAirplan" role="dialog" aria-labelledby="gridSystemModalLabel">
+			                </div>
+
+			                <!--弹出窗口 修改-->
+			                <div class="modal fade" id="changeAirplan" role="dialog" aria-labelledby="gridSystemModalLabel">
+			                </div>
+
+			                <!--弹出窗口 删除警告-->
+			                <div class="modal fade" id="deleteAirplan" role="dialog" aria-labelledby="gridSystemModalLabel">
+			                </div>
+			            </div>
+
+			            <!-- 航线管理模块 -->
+			            <div role="tabpanel" class="tab-pane" id="airway">
+			                <div class="check-div form-inline" >
+			                    <button class="btn btn-yellow btn-xs" data-toggle="modal" onclick="addAw()">添加航线</button>
+			                </div>
+			             	<div class="col-xs-11 col-sm-11 col-md-11 col-lg-11">
+						    	<table id="airwayTable"></table>
+							</div>
+						    <script src="js/airway.js"></script>
+						    <!--弹出窗口 添加-->
+			                <div class="modal fade" id="addAirway" role="dialog" aria-labelledby="gridSystemModalLabel">
+			                </div>
+
+							<!--弹出窗口 详情-->
+			                <div class="modal fade" id="detailAirway" role="dialog" aria-labelledby="gridSystemModalLabel">
+			                </div>
+
+			                <!--弹出窗口 修改-->
+			                <div class="modal fade" id="changeAirway" role="dialog" aria-labelledby="gridSystemModalLabel">
+			                </div>
+
+			                <!--弹出窗口 删除警告-->
+			                <div class="modal fade" id="deleteAirway" role="dialog" aria-labelledby="gridSystemModalLabel">
+			                </div>
+			            </div>
+			        
+						<!-- 机场管理模块 -->
+			            <div role="tabpanel" class="tab-pane" id="airport">
+			                <div class="check-div form-inline" >
+			                    <button class="btn btn-yellow btn-xs" data-toggle="modal" onclick="addAp()">添加机场</button>
+			                </div>
+			             	<div class="col-xs-11 col-sm-11 col-md-11 col-lg-11">
+						    	<table id="airportTable"></table>
+						    </div>
+						    <script src="js/airport.js"></script>
+						    <!--弹出窗口 添加-->
+			                <div class="modal fade" id="addAirport" role="dialog" aria-labelledby="gridSystemModalLabel">
+			                </div>
+
+							<!--弹出窗口 详情-->
+			                <div class="modal fade" id="detailAirport" role="dialog" aria-labelledby="gridSystemModalLabel">
+			                </div>
+
+			                <!--弹出窗口 修改-->
+			                <div class="modal fade" id="changeAirport" role="dialog" aria-labelledby="gridSystemModalLabel">
+			                </div>
+
+			                <!--弹出窗口 删除警告-->
+			                <div class="modal fade" id="deleteAirport" role="dialog" aria-labelledby="gridSystemModalLabel">
+			                </div>
+			            </div>
+
+						<!-- 飞机管理模块 -->
+			            <div role="tabpanel" class="tab-pane" id="aircraft">
+			                <div class="check-div form-inline" >
+			                    <button class="btn btn-yellow btn-xs" data-toggle="modal" onclick="addAc()">添加飞机</button>
+			                </div>
+			             	<div class="col-xs-11 col-sm-11 col-md-11 col-lg-11">
+						    	<table id="aircraftTable"></table>
+							</div>
+						    <script src="js/aircraft.js"></script>
+						    <!--弹出窗口 添加-->
+			                <div class="modal fade" id="addAircraft" role="dialog" aria-labelledby="gridSystemModalLabel">
+			                </div>
+
+			                <!--弹出窗口 修改-->
+			                <div class="modal fade" id="changeAircraft" role="dialog" aria-labelledby="gridSystemModalLabel">
+			                </div>
+
+			                <!--弹出窗口 删除警告-->
+			                <div class="modal fade" id="deleteAircraft" role="dialog" aria-labelledby="gridSystemModalLabel">
+			                </div>
+			            </div>
+
+			            <!--用户管理模块-->
+			            <div role="tabpanel" class="tab-pane" id="user">
+			                <div class="check-div form-inline">
+			                        <button class="btn btn-yellow btn-xs" data-toggle="modal" onclick="addU()">添加用户 </button>
+			                </div>
+			                <div class="col-xs-11 col-sm-11 col-md-11 col-lg-11">
+			                 <table id="userTable"></table>  
+			             	</div>
+			                 <script src="js/user.js"></script>
+
+			                <!--弹出添加用户窗口-->
+			                <div class="modal fade" id="addUser" role="dialog" aria-labelledby="gridSystemModalLabel">
+			                </div>
+			                
+
+			                <!--弹出修改用户窗口-->
+			                <div class="modal fade" id="changeUser" role="dialog" aria-labelledby="gridSystemModalLabel">
+			                </div>
+
+			                <!--弹出删除用户警告窗口-->
+			                <div class="modal fade" id="deleteUser" role="dialog" aria-labelledby="gridSystemModalLabel">
+			                </div>
+			            </div>
+
+		            </div>
+	        	</div>
+        	</div>
+        </div>
+
+</body>
+
+</html>
